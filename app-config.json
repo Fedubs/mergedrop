@@ -1,0 +1,33 @@
+{
+  "name": "MergeDrop",
+  "displayName": "MergeDrop",
+  "description": "Simple puzzle game",
+  "version": "1.0.0",
+  "type": "fullstack",
+  "author": "Federico Mantegazza",
+  "created": "2026-02-09T02:59:31.101Z",
+  "components": {
+    "webapp": {
+      "path": "webapp",
+      "framework": "react",
+      "port": 3000,
+      "scripts": {
+        "dev": "npm run dev",
+        "build": "npm run build",
+        "start": "npm start"
+      }
+    },
+    "ios": {
+      "path": "MergeDrop-iOS",
+      "framework": "swiftui",
+      "minOS": "17.0",
+      "bundleId": "com.fedmante.mergedrop"
+    }
+  },
+  "deployment": {
+    "platform": "",
+    "url": "",
+    "branch": "main"
+  },
+  "notes": ""
+}

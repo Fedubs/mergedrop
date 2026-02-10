@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "mergedrop": {
+      "command": "node",
+      "args": [
+        "/Users/federicomantegazza/Development/MCP_APP/MergeDrop/index.js",
+        "/Users/federicomantegazza/Development/MCP_APP/MergeDrop"
+      ]
+    }
+  }
+}

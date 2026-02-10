@@ -1,0 +1,16 @@
+{
+  "name": "mergedrop",
+  "version": "1.0.0",
+  "description": "MergeDrop - Fibonacci Puzzle Game",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "build": "cd webapp && npm run build",
+    "dev": "cd webapp && npm run dev"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "cors": "^2.8.5"
+  }
+}
