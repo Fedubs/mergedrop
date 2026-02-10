@@ -159,7 +159,7 @@ function processVerticalMerges(grid) {
 }
 
 // Phase 1B: Horizontal merges only
-function processHorizontalMerges(grid) {
+function processHorizontalMerges(grid, protectedCells = new Set()) {
   let changed = false;
   let points = 0;
   let merges = [];
@@ -170,7 +170,11 @@ function processHorizontalMerges(grid) {
     let runStart = -1, runShade = 0, runLen = 0;
     for (let c = 0; c <= COLS; c++) {
       const val = c < COLS ? grid[r][c] : 0;
-      if (val > 0 && val === runShade) {
+      const cellKey = `${r},${c}`;
+      const isProtected = protectedCells.has(cellKey);
+      
+      // Skip protected cells (just broken from blocks) for merging
+      if (val > 0 && val === runShade && !isProtected && runLen > 0) {
         runLen++;
       } else {
         if (runLen >= 3 && runShade > 0) {
@@ -196,9 +200,17 @@ function processHorizontalMerges(grid) {
           points += 50 * runLen;
           changed = true;
         }
-        runStart = c;
-        runShade = val;
-        runLen = 1;
+        
+        // Start new run only if cell is not protected
+        if (!isProtected && val > 0) {
+          runStart = c;
+          runShade = val;
+          runLen = 1;
+        } else {
+          runStart = -1;
+          runShade = 0;
+          runLen = 0;
+        }
       }
     }
   }
@@ -257,6 +269,7 @@ function processAllChains(grid) {
   let combo = 0;
   let steps = [];
   let safety = 0;
+  let protectedCells = new Set(); // Track cells that were just revealed from blocks
 
   while (safety++ < 50) {
     let didAnything = false;
@@ -272,6 +285,11 @@ function processAllChains(grid) {
       const stepPoints = vertResult.points * mult;
       totalPoints += stepPoints;
       const afterVert = cloneGrid(grid);
+
+      // Mark broken blocks as protected for this chain
+      if (vertResult.brokenBlocks) {
+        vertResult.brokenBlocks.forEach(b => protectedCells.add(`${b.r},${b.c}`));
+      }
 
       const has6 = vertResult.merges.some(m => m.newShade >= 6);
       steps.push({
@@ -300,9 +318,9 @@ function processAllChains(grid) {
       }
     }
 
-    // Step B: Horizontal merges
+    // Step B: Horizontal merges with protected cells
     const beforeHoriz = cloneGrid(grid);
-    const horizResult = processHorizontalMerges(grid);
+    const horizResult = processHorizontalMerges(grid, protectedCells);
 
     if (horizResult.changed) {
       combo++;
@@ -311,6 +329,11 @@ function processAllChains(grid) {
       const stepPoints = horizResult.points * mult;
       totalPoints += stepPoints;
       const afterHoriz = cloneGrid(grid);
+
+      // Mark broken blocks as protected for this chain
+      if (horizResult.brokenBlocks) {
+        horizResult.brokenBlocks.forEach(b => protectedCells.add(`${b.r},${b.c}`));
+      }
 
       const has6 = horizResult.merges.some(m => m.newShade >= 6);
       steps.push({
